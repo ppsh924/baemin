@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+
+<!-- 연동할 인터페이스(경로) 이름 적어주기 -->
+<mapper namespace="kr.co.baemin.mapper.CustomMapper">
+	<insert id="mtm_ok" parameterType="kr.co.baemin.vo.MtmVo">
+		insert into mtm(title,content,writeday)
+		values(#{title},#{content},now())
+	</insert>
+</mapper>

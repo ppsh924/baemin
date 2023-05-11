@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+  
+<mapper namespace="kr.co.baemin.mapper.MemberMapper">
+	<select id="userid_check" resultType="int">
+		select count(*) from member where userid=#{param}
+	</select>
+	
+	<insert id="member_input_ok" parameterType="kr.co.baemin.vo.MemberVo">
+		insert into member(userid,name,pwd,zip,juso,juso_etc,phone,email,writeday)
+		values(#{userid},#{name},#{pwd},#{zip},#{juso},#{juso_etc},#{phone},#{email},now())
+	</insert>
+	
+	<select id="member_mybaemin" resultType="kr.co.baemin.vo.MemberVo">
+		select * from member where userid=#{param}
+	</select>
+	
+	<select id="member_edit" resultType="kr.co.baemin.vo.MemberVo">
+		select * from member where userid=#{param}
+	</select>
+	
+	<update id="member_edit_ok" parameterType="kr.co.baemin.vo.MemberVo">
+		update member set name=#{name},juso=#{juso},juso_etc=#{juso_etc},
+		phone=#{phone},email=#{email} where userid=#{userid}
+	</update>
+	
+	<select id="memberlevel" resultType="int">
+		select count(writeday) from gumae 
+		where userid=#{param} and month(writeday)=month(now()) and year(writeday)=year(now())
+	</select>
+
+	<update id="out">
+		update member set state=1 where userid=#{param}
+	</update>
+
+	<select id="pwd_check" resultType="int">
+		select count(*) from member where userid=#{param1} and pwd=#{param2}
+	</select>
+
+	<update id="pwd_change">
+		update member set pwd=#{param1} where userid=#{param2}
+	</update>
+</mapper>

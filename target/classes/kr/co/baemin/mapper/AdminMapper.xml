@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+ 
+<mapper namespace="kr.co.baemin.mapper.AdminMapper">
+
+   <select id="adminmtm" resultType="kr.co.baemin.vo.MantoVo">
+     select  * from manto order by id desc
+   </select>
+  
+   <insert id="amanto" parameterType="kr.co.baemin.vo.AmantoVo">
+     insert into amanto(userid,content,mid,writeday)
+     values(#{userid},#{content},#{mid},now())
+   </insert>
+  
+    <update id="setState">
+     update ${param1} set state=1 where id=#{param2}
+  </update>
+  
+  <!-- select * ,
+      (select sum(cprice) from gumae where userid=member.userid) as chong
+      from member where userid!='admin1234' order by id desc -->
+  <select id="getMember" resultType="kr.co.baemin.vo.MemberVo">
+      select * ,
+      (select sum(cprice) from gumae where userid=member.userid) as chong
+      from member where userid!='admin1234' order by id desc
+  
+  </select>
+ <!--       select DISTINCT m.* ,
+       (select sum(cprice) from gumae where userid=m.userid) as chong,
+       (select sum(su) from gumae where userid=m.userid) as chong2
+       left join  gumae as g ,member as m
+       where m.userid!='admin1234' order by id desc -->
+  
+  
+  <update id="out_ok">
+    update member set state=2 where id=#{param}
+  </update>
+  
+  
+  <select id="admingumae" resultType="HashMap">
+  
+    select g.jumuncode, g.id ,g.userid, f.shop, g.cprice, g.menu, g.pay, g.baeprice, g.su,  b.juso , g.state2 ,
+    (group_concat(menu)) as menu2, (group_concat(su)) as su2
+    from gumae as g
+    left join food as f on g.fcode=f.fcode
+    inner join baesong as b on b.id=g.bae_id
+    group by jumuncode order by g.id desc 
+ 
+     
+  </select>
+  
+  
+ <!-- 
+   select g.jumuncode, g.id ,g.userid, f.shop, g.cprice, g.menu, g.pay, g.baeprice, g.su,  b.juso , g.state2 ,
+    (group_concat(menu)) as menu2
+    from gumae as g
+    left join food as f on g.fcode=f.fcode
+    inner join baesong as b on b.id=g.bae_id
+    group by jumuncode order by g.id desc 
+ 
+  -->
+
+  
+    <update id="chgstate">
+     update gumae set state2=#{param1} where jumuncode=#{param2}
+  </update>
+
+  
+  <select id="getReview" resultType="kr.co.baemin.vo.ReviewVo">
+    select * ,
+    (select shop from food where fcode=review.fcode) as shop2
+    from review order by id asc
+  </select>
+  
+  <insert id="adminreview_ok" parameterType="kr.co.baemin.vo.ReviewVo">
+     insert into review(userid,fcode,content,writeday,grp,seq)
+     values(#{userid},#{fcode},#{content},now(),#{grp},1)
+  </insert>
+  
+   <delete id="reviewdel">
+     delete from review where id=#{param}
+   </delete>
+   
+   <select id="alist" resultType="kr.co.baemin.vo.FoodVo">
+      select * from food where fcode like concat(#{param},'%')
+   </select>
+   
+   <select id="menuall" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food
+	</select>
+	
+	<select id="menuone" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where state=1
+	</select>
+	
+	<select id="franchise" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where fran=1
+	</select>
+	
+	<select id="goodtaste" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food order by total_orders desc 
+	</select>
+   
+	
+	<select id="acontent" resultType="kr.co.baemin.vo.FoodVo">
+      select * from food where fcode=#{param}
+	</select>
+	
+	<update id="acontent_ok" parameterType="kr.co.baemin.vo.FoodVo">
+	    update food set shop=#{shop},baeprice=#{baeprice},baetime=#{baetime},minorder=#{minorder},
+		juso=#{juso},shop_sogae=#{shop_sogae},hours=#{hours},holiday=#{holiday},recent_orders=#{recent_orders},total_orders=#{total_orders},
+		wish=#{wish},star=#{star},phone=#{phone},area=#{area},boss=#{boss},regi_number=#{regi_number},benefit=#{benefit},boss_gongji=#{boss_gongji},
+		boss_one=#{boss_one},m1=#{m1},m1_ex=#{m1_ex},m1_price=#{m1_price},m2=#{m2},m2_ex=#{m2_ex},m2_price=#{m2_price},
+		m3=#{m3},m3_ex=#{m3_ex},m3_price=#{m3_price},m4=#{m4},m4_ex=#{m4_ex},m4_price=#{m4_price},
+		m5=#{m5},m5_ex=#{m5_ex},m5_price=#{m5_price},m1_su=#{m1_su},m2_su=#{m2_su},m3_su=#{m3_su},m4_su=#{m4_su},m5_su=#{m5_su},state=#{state},fran=#{fran} where fcode=#{fcode}
+	</update>
+	
+	 <insert id="areview" parameterType="kr.co.baemin.vo.AreviewVo">
+     insert into areview(userid,content,writeday,rid)
+     values(#{userid},#{content},now(),#{rid})
+     </insert>
+   
+   <update id="setState2">
+     update ${param1} set state=1 where id=#{param2}
+  </update>
+  
+  <update id="changeimage">
+      update food ${param1} where id=#{param2} and fcode=#{param3}
+  </update>
+  
+ <select id="menuallSearch" parameterType="hashMap" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food 
+		where shop like concat('%', #{param1}, '%')
+		or m1 like concat('%', #{param2}, '%')
+		or m2 like concat('%', #{param2}, '%')
+		or m3 like concat('%', #{param2}, '%')
+		or m4 like concat('%', #{param2}, '%')
+		or m5 like concat('%', #{param2}, '%')
+	</select>
+ 
+  <insert id="write_ok" parameterType="kr.co.baemin.vo.GongjiVo">
+    insert into gongji(title, writeday, content)
+    values (#{title},now(),#{content})
+  </insert>
+  
+  <select id="glist" resultType="kr.co.baemin.vo.GongjiVo"> 
+    select*from gongji order by id desc
+  </select>
+  <select id="gcontent" resultType="kr.co.baemin.vo.GongjiVo">
+    select*from gongji where id=#{param}
+  </select>
+  <delete id="delete">
+    delete from gongji where id=#{param}
+  </delete>
+   
+   <select id="update" resultType="kr.co.baemin.vo.GongjiVo" parameterType="kr.co.baemin.vo.GongjiVo">
+    select*from gongji where id=#{id}
+  </select> 
+  
+  <update id="update_ok" parameterType="kr.co.baemin.vo.GongjiVo">
+    update gongji set title=#{title},content=#{content} where id=#{id}
+  </update>
+ 
+ 
+</mapper>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd"> 
+
+<mapper namespace="kr.co.baemin.mapper.MantoMapper">
+   <insert id="write_ok" parameterType="kr.co.baemin.vo.MantoVo">
+    insert into manto(userid,name,email,que,title,content,fname,fname2,fname3,writeday)
+    values(#{userid},#{name},#{email},#{que},#{title},#{content},#{fname},#{fname2},#{fname3},now())
+  </insert>
+  <select id="list" resultType="kr.co.baemin.vo.MantoVo">
+   select * from manto where userid=#{param} <!-- wehre userid=#{param} -->
+  </select>
+  
+
+  <delete id="delete">
+    delete from manto where id=#{id}
+  </delete> 
+  
+
+	
+  
+  <!-- select id="getAlist" resultType="kr.co.baemin.vo.AmantoVo">
+     select a.mid,a.content 
+     from amanto as a, manto as m
+     where mid=#{param} and a.mid=m.id;
+   </select>-->
+  
+     <!-- select m.*, a.mid,(a.content) as content2 
+     from amanto as a, manto as m
+     where a.mid=m.id; --> 
+   <select id="getlist" resultType="HashMap">
+    select m.*, a.mid,(a.content) as content2 
+      from manto as m
+      left join amanto as a on a.mid=m.id where m.userid=#{param}
+  
+   </select>
+   
+      
+  
+  </mapper>

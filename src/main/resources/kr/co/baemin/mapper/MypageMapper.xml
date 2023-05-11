@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+
+<!-- 연동할 인터페이스(경로) 이름 적어주기 -->
+<mapper namespace="kr.co.baemin.mapper.MypageMapper">
+	<select id="wishview" resultType="kr.co.baemin.vo.WishVo">
+		select f.fcode, f.fimg, f.shop, f.star, f.minorder, f.baeprice,
+		f.baetime, w.id, w.writeday from wish as w, food as f
+		where w.fcode=f.fcode and userid=#{param}
+	</select>
+	
+	<delete id="wishdel">
+		delete from wish where id=#{param}
+	</delete>
+	
+	<insert id="cartadd">
+		insert into cart(fcode, menu, su, userid, price, baeprice, writeday)
+		values(#{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, now())  
+	</insert>
+
+	<select id="cart_check" resultType="int">
+		select count(*) from cart
+		where menu=#{param1} and userid=#{param2}	
+	</select>
+	
+	<select id="cartview" resultType="kr.co.baemin.vo.CartVo">
+		select c.fcode, f.fimg, f.shop, c.price, c.state,
+		f.baeprice, c.id, c.writeday, c.menu, c.su, f.minorder
+		from cart as c, food as f
+		where userid=#{param} and c.fcode=f.fcode
+	</select> 
+	
+	<update id="cartstate">
+      	update cart set state=#{param1}, baeprice=#{param2} where userid=#{param3}
+  	</update>
+	
+	<update id="cartup">
+		update cart set su=su+${param1}, price=price+${param2}
+		where menu=#{param3} and userid=#{param4}
+	</update>
+	
+	<delete id="cartdel">
+		delete from cart where id=#{param}
+	</delete>
+	
+	<update id="cartsu">
+		update cart set su=#{param1}, price=#{param2}
+		where menu=#{param3} and userid=#{param4}
+	</update>
+	
+	<select id="jumunview" resultType="HashMap">
+	    select distinct g.jumuncode,f.fcode, f.fimg,g.id,g.writeday,f.fimg,f.shop,g.su,g.cprice,g.state2,g.hugi,g.baeprice,g.menu,
+	    dayofweek(g.writeday) as yoil
+	    from gumae as g, food as f
+	    where  g.userid=#{param} and g.fcode=f.fcode group by jumuncode order by writeday desc, g.id desc;
+  	</select>
+  	
+  	<update id="chgstate">
+    	update gumae set state2=#{state2} where jumuncode=#{jumuncode}
+  	</update>
+  	
+  	<select id="jumundetail" resultType="HashMap">
+	    select g.id, g.writeday, f.fimg, f.fcode, f.shop, g.su, g.cprice, g.state2, 
+	    g.hugi, g.baeprice, g.jumuncode, g.menu, g.pay, g.content,
+	    b.phone,b.juso,b.juso_etc
+	    from gumae as g, food as f, baesong as b
+	    where g.userid=#{param1} and g.fcode=f.fcode and g.bae_id=b.id and g.jumuncode=#{param2}
+  	</select>
+  	
+  	
+  	<delete id="jumundel">
+		delete from gumae where id=#{param}
+	</delete>
+  
+  <select id="getFood2" resultType="kr.co.baemin.vo.FoodVo">
+    select fimg,shop,fcode from food where fcode=(select fcode from gumae where id=#{param})
+  </select>
+  
+   <insert id="review_ok" parameterType="kr.co.baemin.vo.ReviewVo">
+      insert into review(fcode,fname,userid,star,guid,content,writeday,jumuncode)
+      values(#{fcode},#{fname},#{userid},#{star},#{guid},#{content},now(),#{jumuncode})
+   </insert>
+  
+  <update id="setHugi">
+    update gumae set hugi=1 where id=#{param}
+  </update>
+  
+  <select id="getStar" resultType="int">
+     select  round( avg(star) ) from review where fcode=#{param}
+  </select>
+  
+  <update id="setStar">
+    update food set star=#{param1} where fcode=#{param2}
+  </update>
+  
+  <delete id="reviewdel">
+    delete from review where id=#{param}
+  </delete>
+  
+  <!-- 
+  delete from review as r
+  from review r.star
+  inner join food as f.star
+  on r.star=f.star
+  where id='78';
+  
+  where fcode='f01002' and id='77' and star='4'
+   -->
+  
+  
+  <select id="reviewlist" resultType="kr.co.baemin.vo.ReviewVo">
+    select * ,
+    (select shop from food where fcode=review.fcode) as shop2
+    from review order by id asc
+  </select>
+  
+ <select id="review" resultType="kr.co.baemin.vo.GumaeVo">
+      select g.*, menu as menu2 from gumae as g, food as f
+      where jumuncode=#{param1} and userid=#{param2} and g.fcode=f.fcode order by id desc;
+
+  </select>
+  
+   <!--  select r.*, f.shop, a.rid, (a.writeday) as writeday2 , (a.content) as content2
+    from areview as a, review as r, food as f 
+     where a.rid=r.id and f.fcode=r.fcode -->
+   <select id="getreviewlist" resultType="HashMap">
+        select r.*, f.shop, a.rid, g.jumuncode, (a.writeday) as writeday2 , (a.content) as content2,
+      (group_concat(menu)) as menu2
+      from review as r
+      left join areview as a on a.rid=r.id
+      left join food as f on  f.fcode=r.fcode
+      inner join gumae as g where  g.fcode=f.fcode and g.jumuncode=r.jumuncode and g.userid=#{param} group by id desc; 
+  
+  </select>
+      <!-- select r.*, f.shop, a.rid, g.jumuncode, (a.writeday) as writeday2 , (a.content) as content2,
+      (group_concat(menu)) as menu2
+      from review as r
+      left join areview as a on a.rid=r.id
+      left join food as f on  f.fcode=r.fcode
+      inner join gumae as g where  g.fcode=f.fcode and g.jumuncode=r.jumuncode and g.userid='hong123' group by id desc; 
+      -->
+  
+  <select id="update" resultType="HashMap">
+       select r.*, f.shop, g.jumuncode,f.fimg,
+      (group_concat(menu)) as menu2
+      from review as r
+      left join food as f on  f.fcode=r.fcode
+      inner join gumae as g where  g.fcode=f.fcode and g.jumuncode=r.jumuncode and g.userid=#{param} group by id desc; 
+  </select>
+  
+    
+     
+
+<!-- 원본 2 select r.*, f.shop, a.rid, g.jumuncode, (a.writeday) as writeday2 , (a.content) as content2,
+      (group_concat(menu)) as menu2
+      from review as r
+      left join areview as a on a.rid=r.id
+      left join food as f on  f.fcode=r.fcode
+      inner join gumae as g where  g.fcode=f.fcode and  g.jumuncode=#{param} group by id asc; -->
+
+<!-- 원본 
+      select r.*, f.shop, a.rid, g.jumuncode, (a.writeday) as writeday2 , (a.content) as content2,
+      (group_concat(menu)) as menu2
+      from review as r
+      left join areview as a on a.rid=r.id
+      left join food as f on  f.fcode=r.fcode
+      inner join gumae as g where  g.fcode=f.fcode and g.jumuncode=r.jumuncode and g.userid='hong123'group by id desc; ; -->
+
+
+
+  <!-- 
+          select r.*,g.jumuncode
+           from review as r
+            left join food as f on  f.fcode=r.fcode
+             inner join gumae as g where  g.fcode=f.fcode and g.jumuncode=r.jumuncode and g.userid='hong123'group by id desc;
+  
+   -->
+   
+</mapper>
+

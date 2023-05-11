@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+  
+  <mapper namespace="kr.co.baemin.mapper.GongjiMapper">
+     <insert id="write_ok" parameterType="kr.co.baemin.vo.GongjiVo">
+    insert into gongji(title, writeday, content)
+    values (#{title},now(),#{content})
+  </insert>
+  
+  <select id="list" resultType="kr.co.baemin.vo.GongjiVo"> 
+    select*from gongji order by id desc
+  </select>
+  <select id="content" resultType="kr.co.baemin.vo.GongjiVo">
+    select*from gongji where id=#{param}
+  </select>
+  <delete id="delete">
+    delete from gongji where id=#{param}
+  </delete>
+   
+   <select id="update" resultType="kr.co.baemin.vo.GongjiVo" parameterType="kr.co.baemin.vo.GongjiVo">
+    select*from gongji where id=#{id}
+  </select> 
+  
+  <update id="update_ok" parameterType="kr.co.baemin.vo.GongjiVo">
+    update gongji set title=#{title},content=#{content} where id=#{id}
+  </update>
+  </mapper>

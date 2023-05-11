@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+
+<!-- 연동할 인터페이스(경로) 이름 적어주기 -->
+<mapper namespace="kr.co.baemin.mapper.FoodMapper">
+	<select id="getDae" resultType="kr.co.baemin.vo.DaeVo"> 
+		select * from dae order by id asc
+	</select>
+	
+	<select id="getCode" resultType="int">
+		select ifnull(max(right(fcode,3)),0)+1 from food
+		where fcode like concat(#{param},'%')
+	</select>
+	
+	<insert id="food_ok" parameterType="kr.co.baemin.vo.FoodVo">
+		insert into food(fcode,fimg,shop,baeprice,baetime,minorder,
+		juso,shop_sogae,hours,holiday,recent_orders,total_orders,
+		wish,star,phone,area,boss,regi_number,benefit,boss_gongji,
+		boss_one,m1,m1_img,m1_ex,m1_price,m2,m2_img,m2_ex,m2_price,
+		m3,m3_img,m3_ex,m3_price,m4,m4_img,m4_ex,m4_price,
+		m5,m5_img,m5_ex,m5_price,m1_su,m2_su,m3_su,m4_su,m5_su,state,fran,writeday)
+		values(#{fcode},#{fimg},#{shop},#{baeprice},#{baetime},#{minorder},
+		#{juso},#{shop_sogae},#{hours},#{holiday},#{recent_orders},#{total_orders},
+		#{wish},#{star},#{phone},#{area},#{boss},#{regi_number},#{benefit},#{boss_gongji},
+		#{boss_one},#{m1},#{m1_img},#{m1_ex},#{m1_price},#{m2},#{m2_img},#{m2_ex},#{m2_price},
+		#{m3},#{m3_img},#{m3_ex},#{m3_price},#{m4},#{m4_img},#{m4_ex},#{m4_price},
+		#{m5},#{m5_img},#{m5_ex},#{m5_price},#{m1_su},#{m2_su},#{m3_su},#{m4_su},#{m5_su},
+		#{state},#{fran},now())		
+	</insert>
+	
+	<select id="flist" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where fcode like concat(#{param},'%')
+	</select>
+	
+	<select id="fcontent" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where fcode=#{param}
+	</select>
+	
+	<insert id="wish_add">
+		insert into wish(fcode,userid,writeday)
+		values(#{param1},#{param2},now())
+	</insert>
+	
+	<delete id="wish_del">
+		delete from wish where fcode=#{param1} and userid=#{param2}
+	</delete>
+	
+	<select id="getWish" resultType="int">
+		select count(*) from wish where fcode=#{param1} and userid=#{param2}
+	</select>
+	
+	<select id="menuall" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food order by fcode asc
+	</select>
+	
+	<select id="menuone" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where state=1
+	</select>
+	
+	<select id="franchise" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where fran=1
+	</select>
+	
+	<select id="goodtaste" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food order by total_orders desc 
+	</select>
+	
+	<select id="menu_put" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where m1=#{param}
+	</select>
+	
+	<select id="menu_put2" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where m2=#{param}
+	</select>
+	
+	<select id="menu_put3" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where m3=#{param}
+	</select>
+	
+	<select id="menu_put4" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where m4=#{param}
+	</select>
+	
+	<select id="menu_put5" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food where m5=#{param}
+	</select>
+	
+	<!-- <select id="getCart" resultType="kr.co.baemin.vo.CartVo">
+		select * from food where m1=#{param}
+	</select> -->
+	
+	<select id="getCart" resultType="kr.co.baemin.vo.CartVo">
+		select * from cart where userid=#{param}
+	</select> 
+	
+	<select id="getCartFood" resultType="int">
+	   select count(*) from cart  where fcode!=#{param}
+	</select>
+	
+	<delete id="cartAllDel">
+	    delete from cart
+	</delete>
+	
+	<select id="menuallSearch" parameterType="hashMap" resultType="kr.co.baemin.vo.FoodVo">
+		select * from food 
+		where shop like concat('%', #{param1}, '%')
+		or m1 like concat('%', #{param2}, '%')
+		or m2 like concat('%', #{param2}, '%')
+		or m3 like concat('%', #{param2}, '%')
+		or m4 like concat('%', #{param2}, '%')
+		or m5 like concat('%', #{param2}, '%')
+	</select>
+	
+	<!-- 장바구니에 담은 가게가 있을 때만 => 장바구니 보기 출력 -->
+	<select id="chknum" resultType="int">
+		select count(*) from cart where fcode=#{param1} and userid=#{param2}
+	</select>
+	
+	<select id="cartv" resultType="kr.co.baemin.vo.CartVo">
+		select * from cart where menu=#{param}
+	</select>
+
+	<select id="getMember" resultType="kr.co.baemin.vo.MemberVo">
+		select * from member where userid=#{param}
+	</select>
+
+	<select id="getJuso" resultType="kr.co.baemin.vo.BaesongVo">
+		select*from baesong where userid=#{param} and gibon=1
+	</select>
+
+	<insert id="setBaesong" parameterType="kr.co.baemin.vo.BaesongVo">
+		insert into baesong(phone,zip,juso,juso_etc,userid,gibon)
+		values(#{phone},#{zip},#{juso},#{juso_etc},#{userid},1)
+	</insert>
+	
+	<select id="baeview" resultType="kr.co.baemin.vo.BaesongVo">
+		select * from baesong where userid=#{param} order by gibon desc
+	</select>
+
+	<insert id="jusoadd_ok" parameterType="kr.co.baemin.vo.BaesongVo">
+		insert into baesong(phone,zip,juso,juso_etc,userid,gibon)
+		value(#{phone},#{zip},#{juso},#{juso_etc},#{userid},#{gibon})
+	</insert>
+	
+	<update id="baeup_ok" parameterType="kr.co.baemin.vo.BaesongVo">
+		update baesong set phone=#{phone},
+		zip=#{zip}, juso=#{juso}, juso_etc=#{juso_etc}, gibon=#{gibon}
+		where id=#{id}
+	</update>
+
+	<select id="baeup" resultType="kr.co.baemin.vo.BaesongVo">
+		select*from baesong where id=#{param}
+	</select>
+
+	<update id="gibon">
+		update baesong set gibon=0 where userid=#{param}
+	</update>
+
+	<delete id="baedel">
+		delete from baesong where id=#{param}
+	</delete>
+
+	<update id="gibonchg">
+		update baesong set gibon=1
+		where id=(select max(id) from baesong where userid=#{param})
+	</update>
+
+	<update id="chg_ok">
+		update baesong set cla=#{param1} where id=#{param2}
+	</update>
+	
+	<select id="getJcode" resultType="int">
+		select ifnull( max( right(jumuncode,4) ) ,0)+1 from gumae
+		where jumuncode like concat(#{param},'%')
+	</select>
+
+	<insert id="gumae_ok" parameterType="kr.co.baemin.vo.GumaeVo">
+		insert into gumae(userid,bae_id,content,fcode,su,cprice,pay,bank,baeminpay,
+		card,gigan,tong,gibonpay,writeday,jumuncode,menu,state,baeprice)
+		values(#{userid},#{bae_id},#{content},#{fcode},#{su},#{cprice},#{pay},#{bank},#{baeminpay},
+		#{card},#{gigan},#{tong},#{gibonpay},now(),#{jumuncode},#{menu},#{state},#{baeprice})
+	</insert>
+	
+	<delete id="cartalldel">
+		delete from cart where userid=#{param}
+	</delete>
+	
+	<select id="getTotal" resultType="HashMap">
+		select g.id,g.su,g.bae_id,g.fcode,g.cprice,g.pay,f.shop,f.baetime,g.content,
+		b.phone,b.juso,b.juso_etc,b.cla,g.menu,g.baeprice,f.fimg,g.jumuncode,g.writeday
+		from gumae as g, food as f, baesong as b
+		where g.fcode=f.fcode and g.bae_id=b.id and jumuncode=#{param}
+	</select>
+	
+	<delete id="jumundel">
+		delete from gumae where id=#{param}
+	</delete>
+	
+	 <!--  select r.userid,r.id,r.star,r.guid,r.content,r.writeday,r.fcode, (a.content) as content2, (a.writeday) as writeday2 
+     from review as r, areview as a  
+     where r.id=a.rid and fcode='f04003'  -->
+     
+     
+     <!--    select r.*,  a.rid, (a.writeday) as writeday2 , (a.content) as content2
+      from review as r
+      left join areview as a on a.rid=r.id
+      inner join food as f 
+      on f.fcode=r.fcode; -->
+    <select id="getReview" resultType="kr.co.baemin.vo.ReviewVo">
+     select r.*, f.shop, a.rid, g.jumuncode, (a.writeday) as writeday2 , (a.content) as content2,
+      (group_concat(menu)) as menu2
+      from review as r
+      left join areview as a on a.rid=r.id
+      left join food as f on  f.fcode=r.fcode
+      inner join gumae as g where  g.fcode=f.fcode and g.jumuncode=r.jumuncode and r.fcode=#{param} group by id desc;
+    </select>
+    
+ 
+    
+    <!-- 원본
+    select r.*,  a.rid, (a.writeday) as writeday2 , (a.content) as content2 
+      from review as r
+      left join areview as a on a.rid=r.id
+      inner join food as f on f.fcode=r.fcode
+       where r.fcode=#{param}
+     -->
+</mapper>
