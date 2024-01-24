@@ -172,16 +172,19 @@ public class AdminController {
 	{
 	  return service.gcontent(request, model, session);
 	}
+	
 	@RequestMapping("/admin/delete")
 	public String delete(GongjiVo gvo)
 	{
 		return service.delete(gvo);
 	}
+	
 	@RequestMapping("/admin/update")
 	public String update(GongjiVo gvo, Model model)
 	{
 		return service.update(gvo,model);
 	}
+	
 	@RequestMapping("/admin/update_ok")
 	public String update_ok(GongjiVo gvo)
 	{
