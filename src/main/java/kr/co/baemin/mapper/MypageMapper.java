@@ -19,14 +19,13 @@ public interface MypageMapper {
 	public int cart_check(String menu,String userid);
 	public ArrayList<CartVo> cartview(String userid);
 	public void cartup(String su, String price, String menu, String userid);
-    public void cartdel(String id);
-    public void cartsu(int su, int price, String menu, String userid);
-    public void cartstate(String state,String baeprice,String userid);
-    /*public int cartstate2(int state);*/
-    public ArrayList<HashMap<String,String>> jumunview(String userid);
-    public void chgstate(@Param("state2") String state2,@Param("jumuncode") String jumuncode);
-    public ArrayList<HashMap<String,String>> jumundetail(String userid, String jumuncode);
-    public void jumundel(String id);
+        public void cartdel(String id);
+        public void cartsu(int su, int price, String menu, String userid);
+        public void cartstate(String state,String baeprice,String userid);
+        public ArrayList<HashMap<String,String>> jumunview(String userid);
+        public void chgstate(@Param("state2") String state2,@Param("jumuncode") String jumuncode);
+        public ArrayList<HashMap<String,String>> jumundetail(String userid, String jumuncode);
+        public void jumundel(String id);
 	public FoodVo getFood2(String guid);
 	public void review_ok(ReviewVo rvo1);
 	public void setHugi(int guid);
