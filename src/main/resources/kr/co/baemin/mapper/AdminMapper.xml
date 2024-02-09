@@ -18,21 +18,11 @@
      update ${param1} set state=1 where id=#{param2}
   </update>
   
-  <!-- select * ,
-      (select sum(cprice) from gumae where userid=member.userid) as chong
-      from member where userid!='admin1234' order by id desc -->
   <select id="getMember" resultType="kr.co.baemin.vo.MemberVo">
       select * ,
       (select sum(cprice) from gumae where userid=member.userid) as chong
       from member where userid!='admin1234' order by id desc
-  
   </select>
- <!--       select DISTINCT m.* ,
-       (select sum(cprice) from gumae where userid=m.userid) as chong,
-       (select sum(su) from gumae where userid=m.userid) as chong2
-       left join  gumae as g ,member as m
-       where m.userid!='admin1234' order by id desc -->
-  
   
   <update id="out_ok">
     update member set state=2 where id=#{param}
@@ -40,30 +30,16 @@
   
   
   <select id="admingumae" resultType="HashMap">
-  
     select g.jumuncode, g.id ,g.userid, f.shop, g.cprice, g.menu, g.pay, g.baeprice, g.su,  b.juso , g.state2 ,
     (group_concat(menu)) as menu2, (group_concat(su)) as su2
     from gumae as g
     left join food as f on g.fcode=f.fcode
     inner join baesong as b on b.id=g.bae_id
     group by jumuncode order by g.id desc 
- 
-     
   </select>
-  
-  
- <!-- 
-   select g.jumuncode, g.id ,g.userid, f.shop, g.cprice, g.menu, g.pay, g.baeprice, g.su,  b.juso , g.state2 ,
-    (group_concat(menu)) as menu2
-    from gumae as g
-    left join food as f on g.fcode=f.fcode
-    inner join baesong as b on b.id=g.bae_id
-    group by jumuncode order by g.id desc 
- 
-  -->
 
-  
-    <update id="chgstate">
+
+  <update id="chgstate">
      update gumae set state2=#{param1} where jumuncode=#{param2}
   </update>
 
@@ -88,25 +64,24 @@
    </select>
    
    <select id="menuall" resultType="kr.co.baemin.vo.FoodVo">
-		select * from food
-	</select>
+      select * from food
+   </select>
 	
-	<select id="menuone" resultType="kr.co.baemin.vo.FoodVo">
-		select * from food where state=1
-	</select>
+    <select id="menuone" resultType="kr.co.baemin.vo.FoodVo">
+	select * from food where state=1
+    </select>
 	
-	<select id="franchise" resultType="kr.co.baemin.vo.FoodVo">
-		select * from food where fran=1
-	</select>
+     <select id="franchise" resultType="kr.co.baemin.vo.FoodVo">
+	select * from food where fran=1
+     </select>
 	
-	<select id="goodtaste" resultType="kr.co.baemin.vo.FoodVo">
-		select * from food order by total_orders desc 
-	</select>
+    <select id="goodtaste" resultType="kr.co.baemin.vo.FoodVo">
+	select * from food order by total_orders desc 
+     </select>
    
-	
-	<select id="acontent" resultType="kr.co.baemin.vo.FoodVo">
-      select * from food where fcode=#{param}
-	</select>
+      <select id="acontent" resultType="kr.co.baemin.vo.FoodVo">
+         select * from food where fcode=#{param}
+      </select>
 	
 	<update id="acontent_ok" parameterType="kr.co.baemin.vo.FoodVo">
 	    update food set shop=#{shop},baeprice=#{baeprice},baetime=#{baetime},minorder=#{minorder},
@@ -117,9 +92,9 @@
 		m5=#{m5},m5_ex=#{m5_ex},m5_price=#{m5_price},m1_su=#{m1_su},m2_su=#{m2_su},m3_su=#{m3_su},m4_su=#{m4_su},m5_su=#{m5_su},state=#{state},fran=#{fran} where fcode=#{fcode}
 	</update>
 	
-	 <insert id="areview" parameterType="kr.co.baemin.vo.AreviewVo">
-     insert into areview(userid,content,writeday,rid)
-     values(#{userid},#{content},now(),#{rid})
+    <insert id="areview" parameterType="kr.co.baemin.vo.AreviewVo">
+      insert into areview(userid,content,writeday,rid)
+      values(#{userid},#{content},now(),#{rid})
      </insert>
    
    <update id="setState2">
@@ -148,9 +123,11 @@
   <select id="glist" resultType="kr.co.baemin.vo.GongjiVo"> 
     select*from gongji order by id desc
   </select>
+	
   <select id="gcontent" resultType="kr.co.baemin.vo.GongjiVo">
     select*from gongji where id=#{param}
   </select>
+	
   <delete id="delete">
     delete from gongji where id=#{param}
   </delete>
